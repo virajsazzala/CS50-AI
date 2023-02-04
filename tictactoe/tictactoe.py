@@ -23,8 +23,23 @@ def player(board):
     """
     Returns player who has the next turn on a board.
     """
-    raise NotImplementedError
-
+    # to find the number of Xs and Os in the board
+    countX = 0
+    countO = 0
+    countE = 0
+    for i in range(0, len(board)):
+        for j in range(0, len(board[i])):
+            if board[i][j] == X:
+                countX += 1
+            elif board[i][j] == O:
+                countO += 1
+            else:
+                countE += 1
+    
+    if countE == 9 or countO == countX:
+        return X
+    elif countX > countO:
+        return O
 
 def actions(board):
     """
