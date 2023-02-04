@@ -45,11 +45,11 @@ def actions(board):
     """
     Returns set of all possible actions (i, j) available on the board.
     """
-    possible_actions = []
+    possible_actions = set()
     for i in range(0, len(board)):
         for j in range(0, len(board[i])):
             if board[i][j] == EMPTY:
-                possible_actions.append((i, j))
+                possible_actions.add((i, j))
 
     return possible_actions
 
@@ -58,13 +58,8 @@ def result(board, action):
     """
     Returns the board that res from making move (i, j) on the board.
     """
-    i = int(action[0])
-    j = int(action[1])
-    if board[i][j] != EMPTY:
-        raise Exception("Not a valid action!")
-
     resBoard = copy.deepcopy(board)
-    resBoard[i][j] = player(board)
+    resBoard[action[0]][action[1]] = player(board)
     return resBoard
 
 
@@ -103,12 +98,13 @@ def utility(board):
     """
     Returns 1 if X has won the game, -1 if O has won, 0 otherwise.
     """
-    if winner(board) == X:
-        return 1
-    elif winner(board) == O:
-        return -1
-    else:
-        return 0
+    if terminal(board):
+        if winner(board) == X:
+            return 1
+        elif winner(board) == O:
+            return -1
+        else:
+            return 0
 
 
 def minimax(board):
@@ -117,45 +113,46 @@ def minimax(board):
     """
     if terminal(board):
         return None
-
-    def maximize(board):
-        if terminal(board):
-            return utility(board)
-        z = -99999
-        for action in actions(board):
-            z = max(z, minimize(result(board, action)))
-        return z
-
-    def minimize(board):
-        if terminal(board):
-            return utility(board)
-        z = 99999
-        for action in actions(board):
-            z = min(z, maximize(result(board, action)))
-        return z
-
-    if player(board) == X:
-        nextPlayer = O
     else:
-        nextPlayer = X
 
-    res = []
-    possible_actions = []
-    solution = ()
-    if nextPlayer == X:
-        for action in actions(board):
-            v = minimize(result(board, action))
-            res.append(v)
-            possible_actions.append(actions)
+        def max_value(board):
+            if terminal(board):
+                return utility(board), None
 
-        solution = possible_actions[min(res)]
-    if nextPlayer == O:
-        for action in actions(board):
-            v = maximize(result(board, action))
-            res.append(v)
-            possible_actions.append(action)
+            v = float('-inf')
+            move = None
+            for action in actions(board):
+                # v = max(v, min_value(result(board, action)))
+                a, act = min_value(result(board, action))
+                if a > v:
+                    v = a
+                    move = action
+                    if v == 1:
+                        return v, move
 
-        solution = possible_actions[max(res)]
+            return v, move
 
-    print(solution)
-    return solution
+
+        def min_value(board):
+            if terminal(board):
+                return utility(board), None
+
+            v = float('inf')
+            move = None
+            for action in actions(board):
+                # v = max(v, min_value(result(board, action)))
+                a, act = max_value(result(board, action))
+                if a < v:
+                    v = a
+                    move = action
+                    if v == -1:
+                        return v, move
+
+            return v, move
+            
+        if player(board) == X:
+            value, move = max_value(board)
+            return move
+        else:
+            value, move = min_value(board)
+            return move
