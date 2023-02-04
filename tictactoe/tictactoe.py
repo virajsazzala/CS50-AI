@@ -122,7 +122,6 @@ def minimax(board):
             v = float('-inf')
             move = None
             for action in actions(board):
-                # v = max(v, min_value(result(board, action)))
                 a, act = min_value(result(board, action))
                 if a > v:
                     v = a
@@ -140,7 +139,6 @@ def minimax(board):
             v = float('inf')
             move = None
             for action in actions(board):
-                # v = max(v, min_value(result(board, action)))
                 a, act = max_value(result(board, action))
                 if a < v:
                     v = a
