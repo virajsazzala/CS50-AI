@@ -115,6 +115,7 @@ def minimax(board):
         return None
     else:
 
+        # find the maximum values that can be obtained recursively
         def max_value(board):
             if terminal(board):
                 return utility(board), None
@@ -131,7 +132,7 @@ def minimax(board):
 
             return v, move
 
-
+        # find the minimum values that can be obtained recursively
         def min_value(board):
             if terminal(board):
                 return utility(board), None
